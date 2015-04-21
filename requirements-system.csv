@@ -1,6 +1,6 @@
-ubuntu/14.04
-python
-python-dev
-python-virtualenv
-python-pip
-git
+ubuntu/14.04,
+python,
+python-dev,
+python-virtualenv,
+python-pip,
+git,
