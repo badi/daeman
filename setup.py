@@ -6,8 +6,10 @@ import os.path
 # http://semver.org
 VERSION = '0.1.0'
 
-######################################################################
-module_dir = 'daemon'
+NAME = 'daeman'
+
+# ########################################################### version
+module_dir = NAME
 version_file = os.path.join(module_dir, 'version.py')
 version_module_contents = """\
 # WARNING
@@ -21,8 +23,8 @@ with open(version_file, 'w') as fd:
     fd.write(version_module_contents)
 
 
-######################################################################
-setup(name='daeman',
+# ########################################################### setup
+setup(name=NAME,
       version=VERSION,
       description='Daemon Manager for Unix systems',
       author="Badi' Abdul-Wahid",
