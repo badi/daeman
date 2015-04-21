@@ -47,7 +47,8 @@ class TestManagerInit(TestCase, CheckAPI):
     "The constructor"
     def setUp(self):
         self.keywords = [('pidfile', None),
-                         ('logfile', None)]
+                         ('logfile', None),
+                         ('keep_logs', False)]
         args, _, _, defaults = getargspec(Manager.__init__)
         self.argnames = args[1:]
         self.defaults = list(defaults)

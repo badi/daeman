@@ -1,3 +1,6 @@
+import psutil
+import os.path
+import os
 
 
 class Manager(object):
@@ -14,17 +17,48 @@ class Manager(object):
     should load the current state of the managed process.
     """
 
-    def __init__(self, pidfile=None, logfile=None):
-        raise NotImplementedError
+    def __init__(self, pidfile=None, logfile=None, keep_logs=False):
+        self._pidfile = pidfile
+        self._logfile = logfile
 
     def start(self):
+        """Start a managed process
+        """
         raise NotImplementedError
 
     def stop(self):
+        """Stop a managed process
+        """
         raise NotImplementedError
 
     def status(self):
-        raise NotImplementedError
+        """Check if the managed process is running
+
+        :returns: the running state
+        :rtype: bool
+
+        """
+        if not os.path.exists(self._pidfile):
+            return False
+
+        with open(self._pidfile) as fd:
+            pid_str = fd.read().strip()
+        pid = int(pid_str)
+
+        if not psutil.pid_exists(pid):
+            self._cleanup()
+            return False
+        else:
+            return True
 
     def health(self):
         raise NotImplementedError
+
+    def _clean(self):
+        """Cleanup once the managed process is no longer running.
+
+        It is the responsibility of the calling function to ensure
+        that the managed process is not running.
+        """
+        if os.path.exists(self._pidfile):
+            os.unlink(self._pidfile)
