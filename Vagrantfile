@@ -35,6 +35,8 @@ Vagrant.configure(2) do |config|
     set -o xtrace
     sudo apt-get update
 
+    # first column is ubuntu/14.04 (cut -d, -f1)
+    # skip the header line (tail -n +2)
     deps=$(cut -d, -f1 /code/requirements-system.csv | tail -n +2)
     sudo apt-get install -y ${deps}
 
