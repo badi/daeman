@@ -7,18 +7,21 @@ PIP_INSTALL_REQ=$(PIP_INSTALL) -r
 .PHONY: main
 main: install
 
+.PHONY: pip-update
+pip-update:
+	$(PIP_INSTALL) -U pip
 
 .PHONY: depends
-depends: requirements.txt
+depends: requirements.txt pip-update
 	$(PIP_INSTALL_REQ) $<
 
 .PHONY: depends-upgrade
-depends-upgrade: requirements.txt
+depends-upgrade: requirements.txt pip-update
 	$(PIP_INSTALL_REQ) $< -U
 
 
 .PHONY: devel
-devel: requirements-devel.txt
+devel: requirements-devel.txt pip-update
 	$(PIP_INSTALL_REQ) $<
 
 .PHONY: test
