@@ -62,3 +62,5 @@ class Manager(object):
         """
         if os.path.exists(self._pidfile):
             os.unlink(self._pidfile)
+
+        
