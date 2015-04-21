@@ -26,7 +26,7 @@ devel: requirements-devel.txt pip-update
 
 .PHONY: test
 test: setup.py
-	python $< test
+	python $< nosetests -s
 
 .PHONY: install
 install: setup.py depends

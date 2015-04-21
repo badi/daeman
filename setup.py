@@ -30,5 +30,4 @@ setup(name=NAME,
       author="Badi' Abdul-Wahid",
       author_email='abdulwahidc@gmail.com',
       packages=find_packages(),
-      test_suite='nose.collector'
       )
