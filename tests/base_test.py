@@ -8,16 +8,28 @@ from inspect import getargspec
 
 
 class CheckAPI(object):
-    """
-    Ensure that the API is as expected.
+    """Ensure that the API is as expected.
+
 
     Intended usage:
+    ==============================
 
     - Subclass `TestCase` with a `CheckAPI` mixin.
     - provide a `setUp` method initializing:
       - self.keywords :: [(name (str), default value)]
       - self.argnames :: [name (str)]
       - defaults :: [(value)]
+
+
+    Implementation details
+    ==============================
+
+    This uses the `getargspec` function from the builtin `inspect`
+    module to examine the function arguments and default values.
+pp
+    The purpose of these tests is to check that the provided interface
+    adheres to the expected API.
+
     """
 
     def test_num_args(self):
