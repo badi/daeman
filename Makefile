@@ -31,7 +31,7 @@ depends-upgrade: requirements.txt pip-update
 
 
 .PHONY: devel
-devel: requirements-devel.txt pip-update
+devel: requirements-devel.txt depends pip-update
 	$(PIP_INSTALL_REQ) $<
 
 
