@@ -2,22 +2,22 @@ from daeman.systemctl import systemctl_command, ParsedStatus, Status, Systemctl
 from unittest import TestCase
 
 
-class Setup:
+class SetupParseStatusTests:
     def setUp(self):
         self.status_string = systemctl_command('status sshd.service -n 0')
 
 
-class TestParsedStatusParser(Setup, TestCase):
+class TestParsedStatusParser(SetupParseStatusTests, TestCase):
 
     def test_from_systemctl_output(self):
         "Ensure that the parser works"
         ParsedStatus.from_systemctl_output(self.status_string)
 
 
-class TestParsedStatus(Setup, TestCase):
+class TestParsedStatus(SetupParseStatusTests, TestCase):
 
     def setUp(self):
-        Setup.setUp(self)
+        SetupParseStatusTests.setUp(self)
         self.status = ParsedStatus.from_systemctl_output(self.status_string)
 
     def test_header(self):
