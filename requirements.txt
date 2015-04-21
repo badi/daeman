@@ -1,2 +1,3 @@
 git+https://github.com/badi/pxul.git#egg=pxul
 git+https://github.com/badi/pyshc.git#egg=pyshc
+psutil
