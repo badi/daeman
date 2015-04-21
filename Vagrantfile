@@ -32,8 +32,11 @@ Vagrant.configure(2) do |config|
   # Puppet, Chef, Ansible, Salt, and Docker are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
+    set -o xtrace
     sudo apt-get update
-    sudo apt-get install -y python python-virtualenv python-pip git
+
+    deps=$(cut -d, -f1 /code/requirements-system.csv | tail -n +2)
+    sudo apt-get install -y ${deps}
 
     virtualenv ~/ENV
     source ~/ENV/bin/activate
