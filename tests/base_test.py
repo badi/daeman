@@ -26,7 +26,7 @@ class CheckAPI(object):
 
     This uses the `getargspec` function from the builtin `inspect`
     module to examine the function arguments and default values.
-pp
+
     The purpose of these tests is to check that the provided interface
     adheres to the expected API.
 
