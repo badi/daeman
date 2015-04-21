@@ -37,3 +37,8 @@ venv:
 	fi ;\
 	source $(VENV)/bin/activate
 	pip install -U pip
+
+
+.PHONY: vagrant
+vagrant:
+	vagrant up --provider=virtualbox
