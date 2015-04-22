@@ -1,4 +1,4 @@
-from daeman.initctl import initctl_command, ManagerAPI, Status
+from daeman.initctl import initctl_command, ManagerAPI, Status, Manager
 from unittest import TestCase
 from inspect import getargspec
 from nose.plugins.attrib import attr
@@ -27,15 +27,31 @@ class CheckManagerAPI(object):
             self.assertEqual(self.defaults[i], default)
 
 
-@attr(service='upstart')
-class TestManagerAPI_status(CheckManagerAPI, TestCase):
+class CheckManagerAPI_method(CheckManagerAPI):
+
+    method = None
 
     def setUp(self):
         self.keywords = list()
-        args, _, _, defaults = getargspec(ManagerAPI.status)
+        args, _, _, defaults = getargspec(getattr(ManagerAPI, self.method))
         self.argnames = args[1:]
         self.assertIsNone(defaults)
         self.defaults = list()
+
+
+@attr(service='upstart')
+class TestManagerAPI_status(CheckManagerAPI_method, TestCase):
+    method = 'status'
+
+
+@attr(service='upstart')
+class TestManagerAPI_start(CheckManagerAPI_method, TestCase):
+    method = 'start'
+
+
+@attr(service='upstart')
+class TestManagerAPI_stop(CheckManagerAPI_method, TestCase):
+    method = 'stop'
 
 
 @attr(service='upstart')
@@ -69,3 +85,29 @@ class TestStatusResult(TestCase):
         self.assertEqual(status.goal, 'stop')
         self.assertEqual(status.state, 'waiting')
         self.assertNotIn('process', status._vals)
+
+
+@attr(service='upstart')
+class TestManagerRunning(TestCase):
+
+    def setUp(self):
+        self.service = Manager('ssh')
+
+    def test_status(self):
+        "Check the 'status' method"
+        status = self.service.status()
+        self.assertIsInstance(status, Status)
+        self.assertTrue(status.running)
+
+
+@attr(service='upstart')
+class TestManagerStopped(TestCase):
+
+    def setUp(self):
+        self.service = Manager('procps')
+
+    def test_status(self):
+        "Check the 'status' method"
+        status = self.service.status()
+        self.assertIsInstance(status, Status)
+        self.assertFalse(status.running)

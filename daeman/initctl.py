@@ -12,6 +12,12 @@ class ManagerAPI(object):
     def status(self):
         raise NotImplementedError
 
+    def start(self):
+        raise NotImplementedError
+
+    def stop(self):
+        raise NotImplementedError
+
 
 class Status(object):
     "The raw output of running ``initctl status <service>``"
@@ -25,6 +31,8 @@ class Status(object):
     @classmethod
     def from_initctl_output(cls, string):
         """Parse the output from ``systemctl status <name>``
+
+        See man 8 init for job goals and state transitions
 
         :param string: the output string
         :returns: the status result
@@ -76,3 +84,36 @@ class Status(object):
     def process(self):
         "The process ID of the service"
         return self._vals['process']
+
+
+class Manager(ManagerAPI):
+    """Manage a service
+
+    ::
+
+      ssh = Manager('ssh')
+      ssh.status().running
+      # False
+      status = ssh.start()
+      status.goal
+      # start
+      status.state
+      # pre-start
+      status.running
+      # False
+      ssh.status().running
+      # True
+    """
+
+    def __init__(self, service_name):
+        """
+        :param service_name: the service name and controlled by upstart.
+        """
+        "docstring"
+        self._initctl = initctl_command
+        self._service = service_name
+
+    def status(self):
+        output = self._initctl('status {}'.format(self._service))
+        status = Status.from_initctl_output(output)
+        return status
