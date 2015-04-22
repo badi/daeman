@@ -1,4 +1,4 @@
-from daeman.initctl import ManagerAPI
+from daeman.initctl import initctl_command, ManagerAPI, StatusResult
 from unittest import TestCase
 from inspect import getargspec
 from nose.plugins.attrib import attr
@@ -36,3 +36,36 @@ class TestManagerAPI_status(CheckManagerAPI, TestCase):
         self.argnames = args[1:]
         self.assertIsNone(defaults)
         self.defaults = list()
+
+
+@attr(service='upstart')
+class TestStatusResult(TestCase):
+
+    def setUp(self):
+        self.output_ssh = initctl_command('status ssh')
+        self.output_procps = initctl_command('status procps')
+
+    def test_running_service(self):
+        "Ensure that a running service is parsed"
+        StatusResult.from_initctl_output(self.output_ssh)
+
+    def test_stopped_service(self):
+        "Ensure that a stopped service is parsed"
+        StatusResult.from_initctl_output(self.output_procps)
+
+    def test_running_service_correct(self):
+        "Ensure that a running service is parsed correctly"
+        status = StatusResult.from_initctl_output(self.output_ssh)
+        self.assertEqual(status.name, 'ssh')
+        self.assertEqual(status.goal, 'start')
+        self.assertEqual(status.state, 'running')
+        self.assertIsInstance(status.process, int)
+        self.assertGreater(status.process, 0)
+
+    def test_stopped_service_correct(self):
+        "Ensure that a stopped service is parsed correctly"
+        status = StatusResult.from_initctl_output(self.output_procps)
+        self.assertEqual(status.name, 'procps')
+        self.assertEqual(status.goal, 'stop')
+        self.assertEqual(status.state, 'waiting')
+        self.assertNotIn('process', status._vals)
