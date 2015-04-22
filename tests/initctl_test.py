@@ -1,4 +1,4 @@
-from daeman.initctl import initctl_command, ManagerAPI, StatusResult
+from daeman.initctl import initctl_command, ManagerAPI, ParsedStatus
 from unittest import TestCase
 from inspect import getargspec
 from nose.plugins.attrib import attr
@@ -47,15 +47,15 @@ class TestStatusResult(TestCase):
 
     def test_running_service(self):
         "Ensure that a running service is parsed"
-        StatusResult.from_initctl_output(self.output_ssh)
+        ParsedStatus.from_initctl_output(self.output_ssh)
 
     def test_stopped_service(self):
         "Ensure that a stopped service is parsed"
-        StatusResult.from_initctl_output(self.output_procps)
+        ParsedStatus.from_initctl_output(self.output_procps)
 
     def test_running_service_correct(self):
         "Ensure that a running service is parsed correctly"
-        status = StatusResult.from_initctl_output(self.output_ssh)
+        status = ParsedStatus.from_initctl_output(self.output_ssh)
         self.assertEqual(status.name, 'ssh')
         self.assertEqual(status.goal, 'start')
         self.assertEqual(status.state, 'running')
@@ -64,7 +64,7 @@ class TestStatusResult(TestCase):
 
     def test_stopped_service_correct(self):
         "Ensure that a stopped service is parsed correctly"
-        status = StatusResult.from_initctl_output(self.output_procps)
+        status = ParsedStatus.from_initctl_output(self.output_procps)
         self.assertEqual(status.name, 'procps')
         self.assertEqual(status.goal, 'stop')
         self.assertEqual(status.state, 'waiting')

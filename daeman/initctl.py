@@ -13,7 +13,7 @@ class ManagerAPI(object):
         raise NotImplementedError
 
 
-class StatusResult(object):
+class ParsedStatus(object):
     "The raw output of running ``initctl status <service>``"
 
     def __init__(self, vals=None):
