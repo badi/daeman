@@ -1,12 +1,15 @@
 from daeman.systemctl import systemctl_command, ParsedStatus, Status, Systemctl
 from unittest import TestCase
+from nose.plugins.attrib import attr
 
 
+@attr(service='systemd')
 class SetupParseStatusTests:
     def setUp(self):
         self.status_string = systemctl_command('status sshd.service -n 0')
 
 
+@attr(service='systemd')
 class TestParsedStatusParser(SetupParseStatusTests, TestCase):
 
     def test_from_systemctl_output(self):
@@ -14,6 +17,7 @@ class TestParsedStatusParser(SetupParseStatusTests, TestCase):
         ParsedStatus.from_systemctl_output(self.status_string)
 
 
+@attr(service='systemd')
 class TestParsedStatus(SetupParseStatusTests, TestCase):
 
     def setUp(self):
@@ -41,6 +45,7 @@ class TestParsedStatus(SetupParseStatusTests, TestCase):
         self.assertTrue(len(self.status.cgroup) > 0)
 
 
+@attr(service='systemd')
 class TestStatus(TestCase):
     def setUp(self):
         output = systemctl_command('status sshd.service -n 0')
@@ -67,6 +72,7 @@ class TestStatus(TestCase):
         self.assertTrue(path.startswith('/'))
 
 
+@attr(service='systemd')
 class TestSystemctl(TestCase):
     def setUp(self):
         self.systemctl = Systemctl()

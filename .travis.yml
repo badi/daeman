@@ -5,4 +5,4 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y $(cut -d, -f2 requirements-system.csv | tail -n +2)
 install: make devel
-script: make test
+script: nosetests -A "not service == 'systemd'"
