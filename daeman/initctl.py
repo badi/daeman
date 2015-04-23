@@ -107,3 +107,7 @@ class Manager(BaseManager):
         output = self._initctl('status {}'.format(self._service))
         status = Status.from_initctl_output(output)
         return status
+
+    def start(self):
+        self._initctl('start {}'.format(self._service))
+        return self.status()

@@ -76,6 +76,16 @@ class TestManagerRunning(TestCase):
         self.assertIsInstance(status, Status)
         self.assertTrue(status.running)
 
+    def test_start(self):
+        from subprocess import CalledProcessError
+        with self.assertRaises(CalledProcessError) as catcher:
+            self.service.start()
+        self.assertIn('Job is already running', catcher.exception.output)
+
+        status = self.service.status()
+        self.assertIsInstance(status, Status)
+        self.assertTrue(status.running)
+
 
 @attr(service='upstart')
 class TestManagerStopped(TestCase):
@@ -88,3 +98,4 @@ class TestManagerStopped(TestCase):
         status = self.service.status()
         self.assertIsInstance(status, Status)
         self.assertFalse(status.running)
+
