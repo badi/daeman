@@ -2,93 +2,75 @@
 class is as expected.
 """
 
+from util import inspect_function_args
 from unittest import TestCase
 from daeman.base import Manager
-from inspect import getargspec
 
 
 class CheckAPI(object):
     """Ensure that the API is as expected.
-
-
-    Intended usage:
-    ==============================
-
-    - Subclass `TestCase` with a `CheckAPI` mixin.
-    - provide a `setUp` method initializing:
-      - self.keywords :: [(name (str), default value)]
-      - self.argnames :: [name (str)]
-      - defaults :: [(value)]
-
-
-    Implementation details
-    ==============================
-
-    This uses the `getargspec` function from the builtin `inspect`
-    module to examine the function arguments and default values.
-
-    The purpose of these tests is to check that the provided interface
-    adheres to the expected API.
-
     """
+
+    # expected
+    args_exp = list()      # :: [str]
+    keywords_exp = list()  # :: [(str, val)]
+
+    # actual
+    args = None      # :: [str]
+    keywords = None  # :: [(str, val)]
 
     def test_num_args(self):
         "Test the number of function parameters"
-        self.assertEqual(len(self.argnames), len(self.keywords))
+        expected = len(self.args_exp) + len(self.keywords_exp)
+        actual = len(self.args) + len(self.keywords)
+        self.assertEqual(expected, actual)
 
-    def test_arg_names_and_default(self):
+    def test_args(self):
+        "test the name of the arguments"
+        for expected, actual in zip(self.args_exp, self.args):
+            self.assertEqual(expected, actual)
+
+    def test_keywords(self):
         "Make sure that the parameter names and default values match"
-        for i, (name, default) in enumerate(self.keywords):
-            self.assertEqual(name, self.argnames[i])
-            self.assertEqual(self.defaults[i], default)
+        for name, default in enumerate(self.keywords_exp):
+            self.assertIn(name, self.keywords)
+            self.assertEqual(default, self.keywords[name])
 
 
 class TestManagerInit(TestCase, CheckAPI):
     "The constructor"
+
+    args_exp = ['service_name']
+
     def setUp(self):
-        self.keywords = [('pidfile', None),
-                         ('logfile', None),
-                         ('keep_logs', False)]
-        args, _, _, defaults = getargspec(Manager.__init__)
-        self.argnames = args[1:]
-        self.defaults = list(defaults)
+        self.args, self.keywords = inspect_function_args(Manager.__init__)
 
 
 class TestManagerStart(TestCase, CheckAPI):
     "The 'start' method"
+
     def setUp(self):
-        self.keywords = []
-        args, _, _, defaults = getargspec(Manager.start)
-        self.argnames = args[1:]
-        self.assertIsNone(defaults)
-        self.defaults = list()
+        self.args, self.keywords = inspect_function_args(Manager.start)
 
 
 class TestManagerStop(TestCase, CheckAPI):
     "The 'stop' method"
+
     def setUp(self):
-        self.keywords = []
-        args, _, _, defaults = getargspec(Manager.stop)
-        self.argnames = args[1:]
-        self.assertIsNone(defaults)
-        self.defaults = list()
+        self.args, self.keywords = inspect_function_args(Manager.stop)
 
 
 class TestManagerStatus(TestCase, CheckAPI):
     "The 'status' method"
+
     def setUp(self):
-        self.keywords = []
-        args, _, _, defaults = getargspec(Manager.status)
-        self.argnames = args[1:]
-        self.assertIsNone(defaults)
-        self.defaults = list()
+        self.args, self.keywords = inspect_function_args(Manager.status)
 
 
 class TestManagerHealth(TestCase, CheckAPI):
     "The 'health' method"
+
     def setUp(self):
-        self.keywords = []
-        args, _, _, defaults = getargspec(Manager.health)
-        self.argnames = args[1:]
-        self.assertIsNone(defaults)
-        self.defaults = list()
+        self.args, self.keywords = inspect_function_args(Manager.health)
+
+

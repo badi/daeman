@@ -17,9 +17,12 @@ class Manager(object):
     should load the current state of the managed process.
     """
 
-    def __init__(self, pidfile=None, logfile=None, keep_logs=False):
-        self._pidfile = pidfile
-        self._logfile = logfile
+    def __init__(self, service_name):
+        """
+        :param service_name: the name of the service to manage
+
+        """
+        self._service = service_name
 
     def start(self):
         """Start a managed process

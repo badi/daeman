@@ -2,21 +2,11 @@
 Interaction with Upstart ``initctl`` command
 """
 
+from base import Manager
+
 from pyshc.sh import Sh
 
 initctl_command = Sh('initctl')
-
-
-class ManagerAPI(object):
-
-    def status(self):
-        raise NotImplementedError
-
-    def start(self):
-        raise NotImplementedError
-
-    def stop(self):
-        raise NotImplementedError
 
 
 class Status(object):
@@ -86,7 +76,7 @@ class Status(object):
         return self._vals['process']
 
 
-class Manager(ManagerAPI):
+class InitctlManager(Manager):
     """Manage a service
 
     ::
