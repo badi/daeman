@@ -95,12 +95,12 @@ class Manager(BaseManager):
       # True
     """
 
-    def __init__(self, service_name):
+    def __init__(self, service_name, sudo=False):
         """
         :param service_name: the service name and controlled by upstart.
         """
         "docstring"
-        self._initctl = initctl_command
+        self._initctl = self.create_command('initctl', sudo=sudo)
         self._service = service_name
 
     def status(self):

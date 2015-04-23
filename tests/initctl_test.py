@@ -68,7 +68,7 @@ class TestStatusResult(TestCase):
 class TestManagerRunning(TestCase):
 
     def setUp(self):
-        self.service = Manager('ssh')
+        self.service = Manager('ssh', sudo=True)
 
     def test_status(self):
         "Check the 'status' method"

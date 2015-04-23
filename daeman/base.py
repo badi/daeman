@@ -1,3 +1,7 @@
+
+from pyshc.sh import Sh
+
+
 class Manager(object):
     """Provide the basic API for the following functionality dealing with
     external, long-running processes:
@@ -12,12 +16,21 @@ class Manager(object):
     should load the current state of the managed process.
     """
 
-    def __init__(self, service_name):
+    def __init__(self, service_name, sudo=False):
         """
         :param service_name: the name of the service to manage
 
         """
         self._service = service_name
+        self.sudo = sudo
+
+    @classmethod
+    def create_command(cls, command, sudo=False):
+        if sudo:
+            cmd = Sh('sudo', args=command)
+        else:
+            cmd = Sh(command)
+        return cmd
 
     def start(self):
         """Start a managed process

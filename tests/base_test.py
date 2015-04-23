@@ -44,6 +44,7 @@ class TestManagerInit(TestCase, CheckAPI):
     "The constructor"
 
     args_exp = ['service_name']
+    keywords_exp = dict(sudo=False)
 
     def setUp(self):
         self.args, self.keywords = inspect_function_args(Manager.__init__)
