@@ -32,7 +32,7 @@ class CheckAPI(object):
 
     def test_keywords(self):
         "Make sure that the parameter names and default values match"
-        for name, default in enumerate(self.keywords_exp):
+        for name, default in self.keywords_exp.items():
             self.assertIn(name, self.keywords)
             self.assertEqual(default, self.keywords[name])
 
