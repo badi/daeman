@@ -13,17 +13,20 @@ class CheckAPI(object):
 
     # expected
     args_exp = list()      # :: [str]
-    keywords_exp = list()  # :: [(str, val)]
+    keywords_exp = dict()  # :: {str -> val}
 
     # actual
     args = None      # :: [str]
-    keywords = None  # :: [(str, val)]
+    keywords = None  # :: {str -> val}
 
     def test_num_args(self):
         "Test the number of function parameters"
         expected = len(self.args_exp) + len(self.keywords_exp)
         actual = len(self.args) + len(self.keywords)
-        self.assertEqual(expected, actual)
+        self.assertEqual(expected, actual,
+                         'expected {} but got {}'.format(
+                             [self.args_exp, self.keywords_exp],
+                             [self.args, self.keywords]))
 
     def test_args(self):
         "test the name of the arguments"
