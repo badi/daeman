@@ -1,8 +1,3 @@
-import psutil
-import os.path
-import os
-
-
 class Manager(object):
     """Provide the basic API for the following functionality dealing with
     external, long-running processes:
@@ -41,18 +36,7 @@ class Manager(object):
         :rtype: bool
 
         """
-        if not os.path.exists(self._pidfile):
-            return False
-
-        with open(self._pidfile) as fd:
-            pid_str = fd.read().strip()
-        pid = int(pid_str)
-
-        if not psutil.pid_exists(pid):
-            self._cleanup()
-            return False
-        else:
-            return True
+        raise NotImplementedError
 
     def health(self):
         raise NotImplementedError
@@ -63,7 +47,4 @@ class Manager(object):
         It is the responsibility of the calling function to ensure
         that the managed process is not running.
         """
-        if os.path.exists(self._pidfile):
-            os.unlink(self._pidfile)
-
-        
+        raise NotImplementedError
