@@ -2,7 +2,7 @@
 Interaction with Upstart ``initctl`` command
 """
 
-from base import Manager
+from base import Manager as BaseManager
 
 from pyshc.sh import Sh
 
@@ -76,7 +76,7 @@ class Status(object):
         return self._vals['process']
 
 
-class InitctlManager(Manager):
+class Manager(BaseManager):
     """Manage a service
 
     ::

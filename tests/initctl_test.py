@@ -1,8 +1,8 @@
 from util import inspect_function_args
-from base_test import TestManagerInit, CheckAPI
+from base_test import CheckAPI
 
 from daeman.initctl import initctl_command, Status
-from daeman.initctl import InitctlManager as Manager
+from daeman.initctl import Manager
 from unittest import TestCase
 from nose.plugins.attrib import attr
 
