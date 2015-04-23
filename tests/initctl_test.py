@@ -5,6 +5,7 @@ from daeman.initctl import initctl_command, Status
 from daeman.initctl import Manager
 from unittest import TestCase
 from nose.plugins.attrib import attr
+from subprocess import CalledProcessError
 
 
 class CheckManagerAPI_method(CheckAPI):
@@ -69,15 +70,22 @@ class TestManagerRunning(TestCase):
 
     def setUp(self):
         self.service = Manager('ssh', sudo=True)
+        self.was_running = self.service.status().running
+        if not self.was_running:
+            self.service.start()
+
+    def tearDown(self):
+        if not self.was_running and self.service.status().ruuning:
+            self.service.stop()
 
     def test_status(self):
-        "Check the 'status' method"
+        "Get the status of a running service"
         status = self.service.status()
         self.assertIsInstance(status, Status)
         self.assertTrue(status.running)
 
     def test_start(self):
-        from subprocess import CalledProcessError
+        "Try to start a running service"
         with self.assertRaises(CalledProcessError) as catcher:
             self.service.start()
         self.assertIn('Job is already running', catcher.exception.output)
@@ -86,16 +94,44 @@ class TestManagerRunning(TestCase):
         self.assertIsInstance(status, Status)
         self.assertTrue(status.running)
 
+    def test_stop(self):
+        "Try to stop a running service"
+        status = self.service.status()
+        self.assertTrue(status.running)
+        status = self.service.stop()
+        self.assertFalse(status.running)
+
 
 @attr(service='upstart')
 class TestManagerStopped(TestCase):
 
     def setUp(self):
-        self.service = Manager('procps')
+        self.service = Manager('ssh', sudo=True)
+        self.was_running = self.service.status().running
+        if self.was_running:
+            self.service.stop()
+
+    def tearDown(self):
+        if self.was_running and not self.service.status().running:
+            self.service.start()
 
     def test_status(self):
-        "Check the 'status' method"
+        "Get the status of a stopped service"
         status = self.service.status()
         self.assertIsInstance(status, Status)
         self.assertFalse(status.running)
 
+    def test_start(self):
+        "Try to start a stopped service"
+        status = self.service.status()
+        self.assertFalse(status.running)
+        status = self.service.start()
+        self.assertTrue(status.running)
+
+    def test_stop(self):
+        "Try to stop a stopped service"
+        status = self.service.status()
+        self.assertFalse(status.running)
+        with self.assertRaises(CalledProcessError) as catcher:
+            self.service.stop()
+        self.assertIn('Unknown instance', catcher.exception.output)

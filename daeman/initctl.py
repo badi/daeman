@@ -111,3 +111,7 @@ class Manager(BaseManager):
     def start(self):
         self._initctl('start {}'.format(self._service))
         return self.status()
+
+    def stop(self):
+        self._initctl('stop {}'.format(self._service))
+        return self.status()
