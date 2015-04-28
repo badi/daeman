@@ -4,7 +4,7 @@ class is as expected.
 
 from util import inspect_function_args
 from unittest import TestCase
-from daeman.base import Manager
+from daeman.base import AbstractServiceManager
 
 
 class CheckAPI(object):
@@ -47,34 +47,39 @@ class TestManagerInit(TestCase, CheckAPI):
     keywords_exp = dict(sudo=False)
 
     def setUp(self):
-        self.args, self.keywords = inspect_function_args(Manager.__init__)
+        self.args, self.keywords = \
+            inspect_function_args(AbstractServiceManager.__init__)
 
 
 class TestManagerStart(TestCase, CheckAPI):
     "The 'start' method"
 
     def setUp(self):
-        self.args, self.keywords = inspect_function_args(Manager.start)
+        self.args, self.keywords = \
+            inspect_function_args(AbstractServiceManager.start)
 
 
 class TestManagerStop(TestCase, CheckAPI):
     "The 'stop' method"
 
     def setUp(self):
-        self.args, self.keywords = inspect_function_args(Manager.stop)
+        self.args, self.keywords = \
+            inspect_function_args(AbstractServiceManager.stop)
 
 
 class TestManagerStatus(TestCase, CheckAPI):
     "The 'status' method"
 
     def setUp(self):
-        self.args, self.keywords = inspect_function_args(Manager.status)
+        self.args, self.keywords = \
+            inspect_function_args(AbstractServiceManager.status)
 
 
 class TestManagerHealth(TestCase, CheckAPI):
     "The 'health' method"
 
     def setUp(self):
-        self.args, self.keywords = inspect_function_args(Manager.health)
+        self.args, self.keywords = \
+        inspect_function_args(AbstractServiceManager.health)
 
 

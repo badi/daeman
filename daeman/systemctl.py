@@ -5,6 +5,8 @@ Interface with systemctl
 """
 
 from pyshc.sh import Sh
+from base import AbstractServiceManager, AbstractStatus
+
 
 systemctl_command = Sh('systemctl')
 
@@ -20,6 +22,14 @@ class ParsedStatus(object):
 
     @classmethod
     def from_systemctl_output(cls, string):
+        vals = dict()
+        for line in string.split('\n'):
+            k,v = line.strip().split('=', 1)
+            vals[k] = v
+        return cls(vals=vals)
+
+    @classmethod
+    def from_systemctl_status_output(cls, string):
         """Parse the output from 'systemctl status <name>'
 
         :param cls: the class
@@ -39,9 +49,13 @@ class ParsedStatus(object):
         lines = string.split('\n')
         header = lines[0]
         # star (*) or fancy dot (●)
-        if header.startswith('*') or header.startswith('\xe2\x97\x8f'):
-            name = map(str.strip, header.split(' - '))
-            vals['header'] = ' '.join(name[1:])
+        fancy_dot = '\xe2\x97\x8f'
+        if header.startswith('*') or header.startswith(fancy_dot):
+            vals['header'] = header
+            header = header.lstrip('*').lstrip(fancy_dot).strip()
+            name, description = map(str.strip, header.split(' - '))
+            vals['name'] = name
+            vals['description'] = description
 
         # remaining lines
         for line in lines:
@@ -59,27 +73,35 @@ class ParsedStatus(object):
         return cls(vals=vals)
 
     @property
-    def header(self):
-        return self._vals['header']
+    def id(self):
+        return self._vals['Id']
 
     @property
-    def loaded(self):
-        return self._vals['Loaded']
+    def names(self):
+        return self._vals['Names']
 
     @property
-    def active(self):
-        return self._vals['Active']
+    def description(self):
+        return self._vals['Description']
 
     @property
-    def pid(self):
-        return self._vals['Main PID']
+    def load_state(self):
+        return self._vals['LoadState']
 
     @property
-    def cgroup(self):
-        return self._vals['CGroup']
+    def active_state(self):
+        return self._vals['ActiveState']
+
+    @property
+    def main_pid(self):
+        return self._vals['MainPID']
+
+    @property
+    def control_group(self):
+        return self._vals['ControlGroup']
 
 
-class Status(object):
+class Status(AbstractStatus):
     """
     Interpretation of the `ParsedStatus` values.
     """
@@ -92,13 +114,6 @@ class Status(object):
         """
         self._status = status
 
-    def is_loaded(self):
-        "Is the service loaded?"
-        return self._status.loaded.startswith('loaded')
-
-    def is_active(self):
-        return self._status.active.startswith('active')
-
     @property
     def pid(self):
         """Get the PID of the service.
@@ -107,33 +122,52 @@ class Status(object):
         :returns: the process id
         :rtype: :class:`int`
         """
-        try:
-            pid_str = self._status.pid
-        except ValueError:
-            raise OSError('{} is not running'.format(self._status.name))
 
-        pid = int(pid_str.split()[0])
-        return pid
+        # The documentation for the MainPID systemd property has been
+        # elusive. Experimentation shows that a value of 0 (zero)
+        # indicates that the service is *not* running.
+
+        pid_val = self._status.main_pid
+        pid = int(pid_val.strip())
+        if pid > 0:
+            return pid
+        else:
+            raise OSError('{} is not running'.format(self._status.id))
 
     @property
-    def cgroup(self):
-        """Get the CGroup path.
-        Throws OSError if it is not running.
+    def name(self):
+        return self._status.id
 
-        :returns: the CGroup path
-        :rtype: :class:`str`
-        """
-        "The CGroup path"
+    @property
+    def running(self):
         try:
-            return self._status.cgroup
-        except ValueError:
-            raise OSError('{} is not running'.format(self._status.name))
+            self.pid
+            return True
+        except OSError:
+            return False
 
 
-class Systemctl(object):
+class Systemctl(AbstractServiceManager):
 
-    def __init__(self):
-        self.systemctl = systemctl_command
+    def __init__(self, *args, **kwargs):
+        AbstractServiceManager.__init__(self, *args, **kwargs)
+        self._command = self.create_command('systemctl')
 
-    def status(self, service):
-        return self.systemctl(['status', service, '-n', '0'])
+    @property
+    def service(self):
+        return self._command
+
+    def start(self):
+        self.service(['start', self.service_name])
+        return self.status()
+
+    def stop(self):
+        self.service(['stop', self.service_name])
+        return self.status()
+
+    def status(self):
+        raw = self.service(['show', self.service_name])
+        parsed = ParsedStatus.from_systemctl_output(raw)
+        status = Status(parsed)
+        return status
+

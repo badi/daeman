@@ -21,8 +21,3 @@ def inspect_function_args(func):
 
     result = namedtuple('function_args', ['args', 'keywords'])
     return result(args=arguments, keywords=keywords)
-
-
-class foo(object):
-    def test(self, args, key1=None, key2=42):
-        pass

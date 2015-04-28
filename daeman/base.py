@@ -1,8 +1,28 @@
 
 from pyshc.sh import Sh
+from abc import ABCMeta, abstractmethod, abstractproperty
 
 
-class Manager(object):
+class AbstractStatus:
+    """The status of a queried process"""
+
+    __metaclass__ = ABCMeta
+
+    @abstractproperty
+    def name(self):
+        "The name of the service"
+
+    @abstractproperty
+    def running(self):
+        "Is the service running?"
+
+    @abstractproperty
+    def pid(self):
+        """The process id if running.
+        Raises OSError if not running
+        """
+
+class AbstractServiceManager:
     """Provide the basic API for the following functionality dealing with
     external, long-running processes:
 
@@ -16,32 +36,47 @@ class Manager(object):
     should load the current state of the managed process.
     """
 
+    __metaclass__ = ABCMeta
+
     def __init__(self, service_name, sudo=False):
         """
         :param service_name: the name of the service to manage
 
         """
-        self._service = service_name
-        self.sudo = sudo
+        self._service_name = service_name
+        self._sudo = sudo
 
-    @classmethod
-    def create_command(cls, command, sudo=False):
-        if sudo:
+    @property
+    def service_name(self):
+        return self._service_name
+
+    @property
+    def using_sudo(self):
+        "Is 'sudo' used to manage the service?"
+        return self._sudo
+
+    @abstractproperty
+    def service(self):
+        "The command to control the service"
+
+    def create_command(self, command):
+        if self.using_sudo:
             cmd = Sh('sudo', args=command)
         else:
             cmd = Sh(command)
         return cmd
 
-    def start(self):
+    @abstractmethod
+    def start(self, ):
         """Start a managed process
         """
-        raise NotImplementedError
 
+    @abstractmethod
     def stop(self):
         """Stop a managed process
         """
-        raise NotImplementedError
 
+    @abstractmethod
     def status(self):
         """Check if the managed process is running
 
@@ -49,15 +84,13 @@ class Manager(object):
         :rtype: bool
 
         """
-        raise NotImplementedError
 
     def health(self):
-        raise NotImplementedError
+        """Get some information about the health of the process.
 
-    def _clean(self):
-        """Cleanup once the managed process is no longer running.
+        Currently this just returns the status.
 
-        It is the responsibility of the calling function to ensure
-        that the managed process is not running.
+        :returns: status of the process
         """
-        raise NotImplementedError
+        return self.status()
+

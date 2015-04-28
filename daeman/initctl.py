@@ -2,14 +2,14 @@
 Interaction with Upstart ``initctl`` command
 """
 
-from base import Manager as BaseManager
+from base import AbstractServiceManager, AbstractStatus
 
 from pyshc.sh import Sh
 
 initctl_command = Sh('initctl')
 
 
-class Status(object):
+class Status(AbstractStatus):
     "The raw output of running ``initctl status <service>``"
 
     def __init__(self, vals=None):
@@ -76,7 +76,7 @@ class Status(object):
         return self._vals['process']
 
 
-class Manager(BaseManager):
+class Manager(AbstractServiceManager):
     """Manage a service
 
     ::
