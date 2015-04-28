@@ -104,14 +104,14 @@ class Initctl(AbstractServiceManager):
         return self._command
 
     def start(self):
-        self._initctl('start {}'.format(self._service))
+        self.service('start {}'.format(self._service))
         return self.status()
 
     def stop(self):
-        self._initctl('stop {}'.format(self._service))
+        self.service('stop {}'.format(self._service))
         return self.status()
 
     def status(self):
-        output = self._initctl('status {}'.format(self._service))
+        output = self.service('status {}'.format(self._service))
         status = Status.from_initctl_output(output)
         return status
