@@ -56,16 +56,6 @@ class Status(AbstractStatus):
         return self._vals['name']
 
     @property
-    def goal(self):
-        "The target goal of the process"
-        return self._vals['goal']
-
-    @property
-    def state(self):
-        "The state of the services towards the goal"
-        return self._vals['state']
-
-    @property
     def running(self):
         "Is the service running?"
         return 'process' in self._vals
