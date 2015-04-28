@@ -71,7 +71,7 @@ class Status(AbstractStatus):
         return 'process' in self._vals
 
     @property
-    def process(self):
+    def pid(self):
         "The process ID of the service"
         return self._vals['process']
 
