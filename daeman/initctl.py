@@ -76,12 +76,12 @@ class Status(AbstractStatus):
         return self._vals['process']
 
 
-class Manager(AbstractServiceManager):
+class Initctl(AbstractServiceManager):
     """Manage a service
 
     ::
 
-      ssh = Manager('ssh')
+      ssh = Initctl('ssh')
       ssh.status().running
       # False
       status = ssh.start()
@@ -95,18 +95,13 @@ class Manager(AbstractServiceManager):
       # True
     """
 
-    def __init__(self, service_name, sudo=False):
-        """
-        :param service_name: the service name and controlled by upstart.
-        """
-        "docstring"
-        self._initctl = self.create_command('initctl', sudo=sudo)
-        self._service = service_name
+    def __init__(self, *args, **kwargs):
+        AbstractServiceManager.__init__(self, *args, **kwargs)
+        self._command = self.create_command('initctl')
 
-    def status(self):
-        output = self._initctl('status {}'.format(self._service))
-        status = Status.from_initctl_output(output)
-        return status
+    @property
+    def service(self):
+        return self._command
 
     def start(self):
         self._initctl('start {}'.format(self._service))
@@ -115,3 +110,8 @@ class Manager(AbstractServiceManager):
     def stop(self):
         self._initctl('stop {}'.format(self._service))
         return self.status()
+
+    def status(self):
+        output = self._initctl('status {}'.format(self._service))
+        status = Status.from_initctl_output(output)
+        return status

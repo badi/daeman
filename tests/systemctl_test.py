@@ -21,7 +21,7 @@ class TestStatus(CheckStatusAPI, TestCase):
     running = True
 
     def get_status(self):
-        raw = systemctl_command('show {}'.format(TestStatus.name))
+        raw = systemctl_command('show {}'.format(self.name))
         parsed = ParsedStatus.from_systemctl_output(raw)
         status = Status(parsed)
         return status
