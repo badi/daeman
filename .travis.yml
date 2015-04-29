@@ -6,4 +6,4 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y $(cut -d, -f2 requirements-system.csv | tail -n +2)
 install: make devel
-script: nosetests -v -A "not service == 'systemd'"
+script: make test-upstart
