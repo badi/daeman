@@ -42,8 +42,8 @@ class Status(AbstractStatus):
 
         # get PID if running
         if goal == 'start' and state == 'running':
-            pid_str = words[-1]
-            vals['process'] = int(pid_str)
+            pid = words[-1]
+            vals['process'] = pid
 
         return cls(vals=vals)
 
@@ -60,7 +60,8 @@ class Status(AbstractStatus):
     @property
     def pid(self):
         "The process ID of the service"
-        return self._vals['process']
+        pidstr = self._vals['process']
+        return int(pidstr)
 
 
 class Initctl(AbstractServiceManager):
