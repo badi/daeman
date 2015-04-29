@@ -31,8 +31,8 @@ Currently, Systemd and Upstart are supported.
 For example, mange the SSH service on systemd:
 
 ```python
-from daeman.initctl import Initctl
-ssh = Initctl('ssh', sudo=True)
+from daeman.systemctl import Systemctl
+ssh = Systemctl('sshd.service', sudo=True)
 if not ssh.status().running:
     ssh.start()
 status = ssh.status()
