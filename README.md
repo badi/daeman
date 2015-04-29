@@ -2,6 +2,22 @@
 
 # Introduction
 
+Daeman, short for DAEman MANager, provides a Python interface to
+managing daemons running as system services. Daeman provides the
+following API:
+
+* start
+* stop
+* query status
+
+A `status()` request can provide information about the process:
+
+* name
+* if it is running
+* and process id
+
+Currently, Systemd and Upstart are supported.
+
 
 # Requirements
 
@@ -11,16 +27,6 @@
 
 
 # Usage
-
-
-Daeman supports interactions with both the Upstart and Systemd init
-processes. You can the init system to:
-
-* start
-* stop
-* query the status
-
-of various system services, such as the SSH daemon, or others.
 
 For example, mange the SSH service on systemd:
 
