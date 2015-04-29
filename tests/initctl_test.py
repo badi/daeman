@@ -31,7 +31,7 @@ class TestInitctlRunning(CheckServiceRunning, TestCase):
 
 @attr(service='upstart')
 class TestInitctlStopped(CheckServiceStopped, TestCase):
-    manager =Initctl
+    manager = Initctl
     service_name = 'ssh'
     status_class = Status
 
