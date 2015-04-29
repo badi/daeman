@@ -35,9 +35,13 @@ devel: requirements-devel.txt depends pip-update
 	$(PIP_INSTALL_REQ) $<
 
 
-.PHONY: test
-test: setup.py
-	python $< nosetests -s
+.PHONY: test-systemd
+test-systemd: setup.py
+	python $< nosetests -s -A 'not service == "upstart"'
+
+.PHONY: test-upstart
+test-upstart: setup.py
+	python $< nosetests -s -A 'not service == "systemd"'
 
 
 .PHONY: install
