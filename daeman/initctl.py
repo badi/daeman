@@ -3,10 +3,7 @@ Interaction with Upstart ``initctl`` command
 """
 
 from base import AbstractServiceManager, AbstractStatus
-
-from pyshc.sh import Sh, CalledProcessError
-
-initctl_command = Sh('initctl')
+from pyshc.sh import CalledProcessError
 
 
 class Status(AbstractStatus):

@@ -1,8 +1,10 @@
-from daeman.initctl import initctl_command, Status, Initctl
+from daeman.initctl import Status, Initctl
+from pyshc.sh import Sh, CalledProcessError
 from unittest import TestCase
 from nose.plugins.attrib import attr
 from api_check_util import CheckStatusAPI, CheckServiceRunning, CheckServiceStopped
 
+initctl_command = Sh('sudo', args='initctl')
 
 @attr(service='upstart')
 class TestStatus(CheckStatusAPI, TestCase):
@@ -12,6 +14,12 @@ class TestStatus(CheckStatusAPI, TestCase):
     def get_status(self):
         raw = initctl_command('status {}'.format(self.name))
         return Status.from_initctl_output(raw)
+
+    def preSetUpHook(self):
+        try:
+            initctl_command('start {}'.format(self.name))
+        except CalledProcessError, e:
+            pass
 
 
 @attr(service='upstart')

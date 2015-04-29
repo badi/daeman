@@ -14,8 +14,20 @@ class CheckStatusAPI:
     def get_status(self):
         "Return the status object to validate"
 
+    def preSetUpHook(self):
+        "Run before executing :func:`setUp`"
+        pass
+
+    def preTearDownHook(self):
+        "Run before executing :func:`tearDown`"
+        pass
+
     def setUp(self):
+        self.preSetUpHook()
         self.status = self.get_status()
+
+    def tearDown(self):
+        self.preTearDownHook()
 
     def test_name(self):
         self.assertEqual(self.status.name, self.name)
@@ -34,7 +46,6 @@ class CheckServiceRunning:
     service_name = ""  # name of the service (eg ssh)
     sudo = True
     status_class = AbstractStatus
-
 
     def setUp(self):
         self.service = self.manager(self.service_name, sudo=self.sudo)
